@@ -1,0 +1,5 @@
+According to the official website and their YouTube videos, Codeium Chat is supposed to be accessible from the JetBrains IDEs. But I have no way of accessing the chat window...
+
+I wanted to know if I'm the only one or if there is a way to correct this? I don't even have the buttons above the functions to explain or generate the doc!
+
+I installed the latest version of PhpStorm, Rider and Android Studio, the latest version of the extension. But in none of the IDEs is the functionality accessible!

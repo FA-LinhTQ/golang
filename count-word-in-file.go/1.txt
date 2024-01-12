@@ -1,0 +1,1 @@
+Finally, I found the solution! JetBrains always used OpenJDK which is installed on my system instead of the jdk/jre made for the JetBrains IDEs! To change it, simply go to the actions search and search for "Choose boot Java runtime", then choose the JetBrains Runtime with JCEF! and THANKSand
