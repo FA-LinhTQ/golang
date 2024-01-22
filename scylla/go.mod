@@ -4,7 +4,10 @@ go 1.21.5
 
 replace github.com/gocql/gocql => github.com/scylladb/gocql v1.12.0
 
-require github.com/gocql/gocql v1.6.0
+require (
+	github.com/gocql/gocql v1.6.0
+	github.com/google/uuid v1.5.0
+)
 
 require (
 	github.com/golang/snappy v0.0.4 // indirect
