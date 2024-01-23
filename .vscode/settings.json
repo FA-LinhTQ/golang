@@ -1,0 +1,15 @@
+{
+    "sqltools.connections": [
+        {
+            "server": "54.151.167.223",
+            "port": 9042,
+            "previewLimit": 50,
+            "driver": "Scylla",
+            "name": "test",
+            "group": "1",
+            "database": "pets_clinic",
+            "username": "scylla",
+            "password": "6hC9JEBD5wTNQdo"
+        }
+    ]
+}

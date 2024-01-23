@@ -5,21 +5,27 @@ import (
 	"time"
 
 	"github.com/gocql/gocql"
+
+	"example.com/initdb"
 )
 
-func main() {
-	// pet := PetInfo{
-	// 	"Panda",
-	// 	11,
-	// 	time.Now(),
-	// }
-	session := initDB()
-	defer session.Close()
-	// insert(session, pet)
-	// update(session)
-	// delete(session)
-	getAndPrint(session)
+type PetInfo struct {
+	Name      string
+	HeartRate int
+	Time      time.Time
+}
 
+func main() {
+	// Get a greeting message and print it.
+	session := initdb.Connect()
+	defer session.Close()
+	pet := PetInfo{
+		"Milu",
+		20,
+		time.Now(),
+	}
+	insert(session, pet)
+	getAndPrint(session)
 }
 
 func insert(session *gocql.Session, pet PetInfo) {
@@ -45,22 +51,9 @@ func delete(session *gocql.Session) {
 }
 
 func getAndPrint(session *gocql.Session) (query *gocql.Query) {
-	query = session.Query("SELECT * FROM heartrate_v2")
+	query = session.Query("SELECT * FROM heartrate_v1")
 	printData(query)
 	return
-}
-
-func initDB() *gocql.Session {
-	var cluster = gocql.NewCluster("node-0.aws-ap-southeast-1.4ff680e7460310e78cb2.clusters.scylla.cloud")
-	cluster.Keyspace = "pets_clinic"
-	cluster.Authenticator = gocql.PasswordAuthenticator{Username: "scylla", Password: "6hC9JEBD5wTNQdo"}
-	cluster.PoolConfig.HostSelectionPolicy = gocql.DCAwareRoundRobinPolicy("AWS_US_EAST_1")
-
-	var session, err = cluster.CreateSession()
-	if err != nil {
-		panic("Failed to connect to cluster")
-	}
-	return session
 }
 
 func printData(query *gocql.Query) {
@@ -72,10 +65,4 @@ func printData(query *gocql.Query) {
 	} else {
 		panic("Query error: " + err.Error())
 	}
-}
-
-type PetInfo struct {
-	Name      string
-	HeartRate int
-	Time      time.Time
 }
