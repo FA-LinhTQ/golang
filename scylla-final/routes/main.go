@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"time"
+	"strconv"
 
 	"example.com/crud"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
@@ -18,32 +19,67 @@ func initServer() {
 	h := server.Default(server.WithHostPorts(":8080"))
 	registerRoutes(h)
 	h.Spin()
-
 }
 
 func registerRoutes(h *server.Hertz) {
-	h.GET("/get", func(ctx context.Context, c *app.RequestContext) {
+	h.GET("/find/:id", func(ctx context.Context, c *app.RequestContext) {
+		id, _ := strconv.Atoi(c.Param("id"))
 		session := crud.CreateSession()
-		crud.GetAndPrint(session)
-		crud.CloseSession(session)
-		// name := c.Param("name")
-		// age := c.Param("age")
-		// c.String(consts.StatusOK, name+" "+age)
+		defer crud.CloseSession(session)
+		rows := crud.Find(session, id)
+		c.JSON(consts.StatusOK, utils.H{
+			"status": true,
+			"data":   rows,
+		})
 	})
-	h.GET("/create", func(ctx context.Context, c *app.RequestContext) {
-		name := c.Param("name")
-		age := c.Param("age")
-		c.String(consts.StatusOK, name+" "+age)
+
+	h.POST("/create", func(ctx context.Context, c *app.RequestContext) {
+		var pet PetInfo
+		c.BindAndValidate(&pet)
+		petMap := map[string]interface{}{
+			"id":   pet.ID,
+			"name": pet.Name,
+		}
+		session := crud.CreateSession()
+		defer crud.CloseSession(session)
+		crud.Insert(session, petMap)
+
+		c.JSON(consts.StatusOK, utils.H{
+			"status": true,
+			"data":   petMap,
+		})
 	})
-	h.GET("/update", func(ctx context.Context, c *app.RequestContext) {
-		name := c.Param("name")
-		age := c.Param("age")
-		c.String(consts.StatusOK, name+" "+age)
+	h.POST("/update", func(ctx context.Context, c *app.RequestContext) {
+		var pet PetInfo
+		c.BindAndValidate(&pet)
+		petMap := map[string]interface{}{
+			"id":   pet.ID,
+			"name": pet.Name,
+		}
+		session := crud.CreateSession()
+		defer crud.CloseSession(session)
+		crud.Update(session, petMap)
+
+		c.JSON(consts.StatusOK, utils.H{
+			"status": true,
+			"data":   petMap,
+		})
 	})
-	h.GET("/delete", func(ctx context.Context, c *app.RequestContext) {
-		name := c.Param("name")
-		age := c.Param("age")
-		c.String(consts.StatusOK, name+" "+age)
+	h.POST("/delete", func(ctx context.Context, c *app.RequestContext) {
+		var pet PetInfo
+		c.BindAndValidate(&pet)
+		petMap := map[string]interface{}{
+			"id":   pet.ID,
+			"name": pet.Name,
+		}
+		session := crud.CreateSession()
+		defer crud.CloseSession(session)
+		crud.Delete(session, petMap)
+
+		c.JSON(consts.StatusOK, utils.H{
+			"status": true,
+			"data":   petMap,
+		})
 	})
 	// h.GET("/src/*filepath", func(ctx context.Context, c *app.RequestContext) {
 	// 	filepath := c.Param("filepath")
@@ -58,7 +94,6 @@ func registerRoutes(h *server.Hertz) {
 }
 
 type PetInfo struct {
-	Name      string
-	HeartRate int
-	Time      time.Time
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
